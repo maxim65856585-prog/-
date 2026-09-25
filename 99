@@ -1,0 +1,114 @@
+-- Загрузка библиотеки UI (Rayfield)
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+
+-- Создание окна
+local Window = Rayfield:CreateWindow({
+   Name = "99 Nights | Script Menu",
+   LoadingTitle = "Загрузка меню...",
+   LoadingSubtitle = "99 Nights Helper",
+   ConfigurationSaving = {
+      Enabled = false
+   }
+})
+
+-- Вкладка "Главная"
+local MainTab = Window:CreateTab("Основные", 4483362458)
+
+-- 1. НАСТРОЙКА СКОРОСТИ
+local WalkSpeed = 16
+MainTab:CreateSlider({
+   Name = "Скорость бега (Speed)",
+   Range = {16, 200},
+   Increment = 1,
+   Suffix = "WalkSpeed",
+   CurrentValue = 16,
+   Flag = "SpeedSlider",
+   Callback = function(Value)
+      WalkSpeed = Value
+   end,
+})
+
+-- Цикл обновления скорости
+game:GetService("RunService").Stepped:Connect(function()
+   local char = game.Players.LocalPlayer.Character
+   if char and char:FindFirstChildOfClass("Humanoid") then
+      char:FindFirstChildOfClass("Humanoid").WalkSpeed = WalkSpeed
+   end
+end)
+
+-- 2. НОКЛИП (Noclip)
+local NoclipEnabled = false
+MainTab:CreateToggle({
+   Name = "Ноклип (Noclip)",
+   CurrentValue = false,
+   Flag = "NoclipToggle",
+   Callback = function(Value)
+      NoclipEnabled = Value
+   end,
+})
+
+-- Цикл работы ноклипа
+game:GetService("RunService").Stepped:Connect(function()
+   if NoclipEnabled then
+      local char = game.Players.LocalPlayer.Character
+      if char then
+         for _, part in pairs(char:GetDescendants()) do
+            if part:IsA("BasePart") then
+               part.CanCollide = false
+            end
+         end
+      end
+   end
+end)
+
+-- 3. СПАВН ДЕРЕВА
+local WoodAmount = 5
+
+MainTab:CreateSection("Спавн предметов")
+
+MainTab:CreateSlider({
+   Name = "Количество дерева",
+   Range = {1, 50},
+   Increment = 1,
+   Suffix = "шт.",
+   CurrentValue = 5,
+   Flag = "WoodAmountSlider",
+   Callback = function(Value)
+      WoodAmount = Value
+   end,
+})
+
+MainTab:CreateButton({
+   Name = "Заспавнить дерево (Wood)",
+   Callback = function()
+      local char = game.Players.LocalPlayer.Character
+      if not char or not char:FindFirstChild("HumanoidRootPart") then return end
+
+      local spawnPos = char.HumanoidRootPart.CFrame * CFrame.new(0, 0, -4)
+      local replicatedStorage = game:GetService("ReplicatedStorage")
+      local remote = replicatedStorage:FindFirstChild("SpawnItem", true) or replicatedStorage:FindFirstChild("CreateItem", true)
+
+      for i = 1, WoodAmount do
+         if remote and remote:IsA("RemoteEvent") then
+            -- Вызов серверного события спавна (если доступно в режиме)
+            remote:FireServer("Wood", spawnPos)
+         else
+            -- Клиентский спавн
+            local wood = Instance.new("Part")
+            wood.Name = "Wood"
+            wood.Size = Vector3.new(1.5, 4, 1.5)
+            wood.Material = Enum.Material.Wood
+            wood.BrickColor = BrickColor.new("Brown")
+            wood.CFrame = spawnPos + Vector3.new(math.random(-2, 2), 2, math.random(-2, 2))
+            wood.Parent = workspace
+         end
+      end
+
+      Rayfield:Notify({
+         Title = "Успешно!",
+         Content = "Заспавнено " .. tostring(WoodAmount) .. " ед. дерева.",
+         Duration = 3,
+         Image = 4483362458,
+      })
+   end,
+})
