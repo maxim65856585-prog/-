@@ -1,0 +1,63 @@
+-- [[ 99 Nights Script - Speed, Noclip & Wood Spawn ]] --
+
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+
+-- Настройки
+local WalkSpeed = 30 -- Измените на нужную скорость (по умолчанию в Roblox 16)
+local NoclipEnabled = true
+
+-- 1. НАСТРОЙКА СКОРОСТИ И НОКЛИП
+RunService.Stepped:Connect(function()
+    local character = LocalPlayer.Character
+    if character then
+        -- Установка скорости
+        local humanoid = character:FindFirstChildOfClass("Humanoid")
+        if humanoid then
+            humanoid.WalkSpeed = WalkSpeed
+        end
+        
+        -- Ноклип (отключение коллизии)
+        if NoclipEnabled then
+            for _, part in pairs(character:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.CanCollide = false
+                end
+            end
+        end
+    end
+end)
+
+-- 2. ФУНКЦИЯ СПАВНА ДЕРЕВА
+local function SpawnWood(amount)
+    amount = amount or 1
+    local character = LocalPlayer.Character
+    if not character or not character:FindFirstChild("HumanoidRootPart") then return end
+    
+    local spawnPos = character.HumanoidRootPart.CFrame * CFrame.new(0, 0, -3)
+
+    for i = 1, amount do
+        -- Попытка вызвать событие спавна на сервере
+        local replicatedStorage = game:GetService("ReplicatedStorage")
+        local remote = replicatedStorage:FindFirstChild("SpawnItem", true) or replicatedStorage:FindFirstChild("CreateItem", true)
+        
+        if remote and remote:IsA("RemoteEvent") then
+            remote:FireServer("Wood", spawnPos)
+        else
+            -- Локальный спавн (если предметы управляются клиентом)
+            local wood = Instance.new("Part")
+            wood.Name = "Wood"
+            wood.Size = Vector3.new(1, 4, 1)
+            wood.Material = Enum.Material.Wood
+            wood.BrickColor = BrickColor.new("Brown")
+            wood.CFrame = spawnPos + Vector3.new(math.random(-2,2), 2, math.random(-2,2))
+            wood.Parent = workspace
+        end
+    end
+end
+
+-- Спавним 5 единиц дерева при запуске скрипта
+SpawnWood(5)
+
+print("Скрипт успешно запущен!")
