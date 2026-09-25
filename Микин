@@ -1,0 +1,479 @@
+--[[
+    Script Name: Zenin Need (MM2 Ultra Edition)
+    Key System: "Mamix"
+    Features: Fixed ESP (Murderer/Sheriff/Innocent/Box/Name/HP), Aimbot, Wallbang,
+              SkinChanger, Wings, Aura, Speed, Invisible, Spinbot, Auto Gun Pickup,
+              Fling All, Anti-Fling, Advanced Tabs GUI, Circle Toggle Button.
+]]--
+
+local Players = game:GetService("Players")
+local LocalPlayer = Players.LocalPlayer
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Workspace = game:GetService("Workspace")
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+-- Удаление старых версий GUI
+if CoreGui:FindFirstChild("ZeninNeedGui") then CoreGui.ZeninNeedGui:Destroy() end
+if CoreGui:FindFirstChild("ZeninKeyGui") then CoreGui.ZeninKeyGui:Destroy() end
+
+-- Переменные функций
+local ESPEnabled = false
+local AimbotEnabled = false
+local SpeedEnabled = false
+local SpeedValue = 30
+local InvisibleEnabled = false
+local WallbangEnabled = false
+local SpinbotEnabled = false
+local AutoGunPickup = false
+local AntiFlingEnabled = false
+local WingsEnabled = false
+local AuraEnabled = false
+
+---------------------------------------------------
+-- 1. СИСТЕМА КЛЮЧЕЙ (Ключ: "Mamix")
+---------------------------------------------------
+local KeyGui = Instance.new("ScreenGui")
+KeyGui.Name = "ZeninKeyGui"
+KeyGui.Parent = CoreGui
+
+local KeyFrame = Instance.new("Frame", KeyGui)
+KeyFrame.Size = UDim2.new(0, 360, 0, 220)
+KeyFrame.Position = UDim2.new(0.5, -180, 0.5, -110)
+KeyFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Active = true
+KeyFrame.Draggable = true
+
+Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 14)
+local KeyStroke = Instance.new("UIStroke", KeyFrame)
+KeyStroke.Color = Color3.fromRGB(160, 32, 240)
+KeyStroke.Thickness = 2
+
+local KeyTitle = Instance.new("TextLabel", KeyFrame)
+KeyTitle.Size = UDim2.new(1, 0, 0, 50)
+KeyTitle.Text = "ZENIN NEED | Авторизация"
+KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyTitle.TextSize = 18
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.BackgroundTransparency = 1
+
+local KeyInput = Instance.new("TextBox", KeyFrame)
+KeyInput.Size = UDim2.new(0.85, 0, 0, 42)
+KeyInput.Position = UDim2.new(0.075, 0, 0.36, 0)
+KeyInput.PlaceholderText = "Введите ключ доступа..."
+KeyInput.Text = ""
+KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyInput.BackgroundColor3 = Color3.fromRGB(25, 25, 32)
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.TextSize = 14
+Instance.new("UICorner", KeyInput).CornerRadius = UDim.new(0, 8)
+
+local KeyBtn = Instance.new("TextButton", KeyFrame)
+KeyBtn.Size = UDim2.new(0.85, 0, 0, 42)
+KeyBtn.Position = UDim2.new(0.075, 0, 0.68, 0)
+KeyBtn.Text = "ВОЙТИ В СКТИПТ"
+KeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+KeyBtn.BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+KeyBtn.Font = Enum.Font.GothamBold
+KeyBtn.TextSize = 14
+Instance.new("UICorner", KeyBtn).CornerRadius = UDim.new(0, 8)
+
+KeyBtn.MouseButton1Click:Connect(function()
+    if KeyInput.Text == "Mamix" then
+        KeyGui:Destroy()
+        BuildUltraMenu()
+    else
+        KeyTitle.Text = "НЕВЕРНЫЙ КЛЮЧ! (Подсказка: Mamix)"
+        KeyTitle.TextColor3 = Color3.fromRGB(255, 60, 60)
+        task.wait(1.5)
+        KeyTitle.Text = "ZENIN NEED | Авторизация"
+        KeyTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+    end
+end)
+
+---------------------------------------------------
+-- 2. УЛЬТРА КРАСИВОЕ МЕНЮ С ВКЛАДКАМИ
+---------------------------------------------------
+function BuildUltraMenu()
+    local MainGui = Instance.new("ScreenGui")
+    MainGui.Name = "ZeninNeedGui"
+    MainGui.Parent = CoreGui
+
+    local MainFrame = Instance.new("Frame", MainGui)
+    MainFrame.Name = "MainFrame"
+    MainFrame.Size = UDim2.new(0, 520, 0, 360)
+    MainFrame.Position = UDim2.new(0.5, -260, 0.5, -180)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(13, 13, 18)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+
+    Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 14)
+    local FrameStroke = Instance.new("UIStroke", MainFrame)
+    FrameStroke.Color = Color3.fromRGB(160, 32, 240)
+    FrameStroke.Thickness = 2
+
+    -- Заголовок
+    local Header = Instance.new("Frame", MainFrame)
+    Header.Size = UDim2.new(1, 0, 0, 45)
+    Header.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+    Header.BorderSizePixel = 0
+    Instance.new("UICorner", Header).CornerRadius = UDim.new(0, 14)
+
+    local TitleText = Instance.new("TextLabel", Header)
+    TitleText.Size = UDim2.new(1, -20, 1, 0)
+    TitleText.Position = UDim2.new(0, 15, 0, 0)
+    TitleText.Text = "ZENIN NEED  ❖  Murder Mystery 2"
+    TitleText.TextColor3 = Color3.fromRGB(190, 90, 255)
+    TitleText.TextXAlignment = Enum.TextXAlignment.Left
+    TitleText.Font = Enum.Font.GothamBold
+    TitleText.TextSize = 16
+    TitleText.BackgroundTransparency = 1
+
+    -- Боковая панель вкладок (Sidebar)
+    local Sidebar = Instance.new("Frame", MainFrame)
+    Sidebar.Size = UDim2.new(0, 130, 1, -55)
+    Sidebar.Position = UDim2.new(0, 8, 0, 50)
+    Sidebar.BackgroundColor3 = Color3.fromRGB(18, 18, 24)
+    Sidebar.BorderSizePixel = 0
+    Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 10)
+
+    local SidebarList = Instance.new("UIListLayout", Sidebar)
+    SidebarList.Padding = UDim.new(0, 6)
+
+    -- Контейнер для вкладок
+    local ContentContainer = Instance.new("Frame", MainFrame)
+    ContentContainer.Size = UDim2.new(1, -155, 1, -55)
+    ContentContainer.Position = UDim2.new(0, 145, 0, 50)
+    ContentContainer.BackgroundTransparency = 1
+
+    local Tabs = {}
+
+    local function CreateTab(name)
+        local TabBtn = Instance.new("TextButton", Sidebar)
+        TabBtn.Size = UDim2.new(1, 0, 0, 36)
+        TabBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 34)
+        TabBtn.Text = name
+        TabBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+        TabBtn.Font = Enum.Font.GothamMedium
+        TabBtn.TextSize = 13
+        Instance.new("UICorner", TabBtn).CornerRadius = UDim.new(0, 8)
+
+        local TabScroll = Instance.new("ScrollingFrame", ContentContainer)
+        TabScroll.Size = UDim2.new(1, 0, 1, 0)
+        TabScroll.BackgroundTransparency = 1
+        TabScroll.Visible = false
+        TabScroll.CanvasSize = UDim2.new(0, 0, 0, 400)
+        TabScroll.ScrollBarThickness = 4
+        TabScroll.ScrollBarImageColor3 = Color3.fromRGB(140, 0, 255)
+
+        local ListLayout = Instance.new("UIListLayout", TabScroll)
+        ListLayout.Padding = UDim.new(0, 8)
+
+        TabBtn.MouseButton1Click:Connect(function()
+            for _, t in pairs(Tabs) do
+                t.Scroll.Visible = false
+                t.Btn.BackgroundColor3 = Color3.fromRGB(25, 25, 34)
+                t.Btn.TextColor3 = Color3.fromRGB(180, 180, 190)
+            end
+            TabScroll.Visible = true
+            TabBtn.BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+            TabBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end)
+
+        table.insert(Tabs, {Btn = TabBtn, Scroll = TabScroll})
+        return TabScroll
+    end
+
+    -- Вкладки
+    local MainTab = CreateTab("Главная")
+    local CombatTab = CreateTab("Бой")
+    local VisualsTab = CreateTab("Визуалы")
+    local MiscTab = CreateTab("Фан & Скины")
+
+    -- Активация первой вкладки
+    Tabs[1].Scroll.Visible = true
+    Tabs[1].Btn.BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+    Tabs[1].Btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+    ---------------------------------------------------
+    -- ЭЛЕМЕНТЫ УПРАВЛЕНИЯ В МЕНЮ
+    ---------------------------------------------------
+    local function AddToggle(tabScroll, text, defaultState, callback)
+        local btn = Instance.new("TextButton", tabScroll)
+        btn.Size = UDim2.new(1, -8, 0, 38)
+        btn.BackgroundColor3 = defaultState and Color3.fromRGB(140, 0, 255) or Color3.fromRGB(24, 24, 32)
+        btn.Text = "  " .. text
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.TextXAlignment = Enum.TextXAlignment.Left
+        btn.Font = Enum.Font.GothamMedium
+        btn.TextSize = 13
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+
+        local indicator = Instance.new("Frame", btn)
+        indicator.Size = UDim2.new(0, 12, 0, 12)
+        indicator.Position = UDim2.new(1, -22, 0.5, -6)
+        indicator.BackgroundColor3 = defaultState and Color3.fromRGB(0, 255, 128) or Color3.fromRGB(80, 80, 90)
+        Instance.new("UICorner", indicator).CornerRadius = UDim.new(1, 0)
+
+        local active = defaultState
+        btn.MouseButton1Click:Connect(function()
+            active = not active
+            btn.BackgroundColor3 = active and Color3.fromRGB(140, 0, 255) or Color3.fromRGB(24, 24, 32)
+            indicator.BackgroundColor3 = active and Color3.fromRGB(0, 255, 128) or Color3.fromRGB(80, 80, 90)
+            callback(active)
+        end)
+    end
+
+    local function AddButton(tabScroll, text, callback)
+        local btn = Instance.new("TextButton", tabScroll)
+        btn.Size = UDim2.new(1, -8, 0, 38)
+        btn.BackgroundColor3 = Color3.fromRGB(34, 34, 46)
+        btn.Text = "  " .. text
+        btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.TextXAlignment = Enum.TextXAlignment.Left
+        btn.Font = Enum.Font.GothamMedium
+        btn.TextSize = 13
+        Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
+        btn.MouseButton1Click:Connect(callback)
+    end
+
+    -- Наполнение Вкладок
+    AddToggle(MainTab, "Быстрый бег", false, function(v) SpeedEnabled = v end)
+    AddToggle(MainTab, "Невидимость (Invisible)", false, function(v) InvisibleEnabled = v end)
+
+    AddToggle(CombatTab, "Аимбот на Убийцу", false, function(v) AimbotEnabled = v end)
+    AddToggle(CombatTab, "Стрельба сквозь стены (Wallbang)", false, function(v) WallbangEnabled = v end)
+
+    AddToggle(VisualsTab, "ESP (Роли / Ники / HP / Бокс)", false, function(v) ESPEnabled = v end)
+    AddToggle(VisualsTab, "Визуальные крылья", false, function(v) WingsEnabled = v end)
+    AddToggle(VisualsTab, "Аура вокруг игрока", false, function(v) AuraEnabled = v end)
+
+    AddToggle(MiscTab, "Авто-подбор оружия", false, function(v) AutoGunPickup = v end)
+    AddToggle(MiscTab, "Крутилка (Spinbot)", false, function(v) SpinbotEnabled = v end)
+    AddToggle(MiscTab, "Анти-Флинг", true, function(v) AntiFlingEnabled = v end)
+
+    AddButton(MiscTab, "Скин: Chroma Нож", function()
+        pcall(function()
+            local k = LocalPlayer.Backpack:FindFirstChild("Knife") or LocalPlayer.Character:FindFirstChild("Knife")
+            if k and k:FindFirstChild("Handle") then
+                k.Handle.Color = Color3.fromRGB(255, 0, 255)
+                k.Handle.Material = Enum.Material.ForceField
+            end
+        end)
+    end)
+
+    AddButton(MiscTab, "Скин: Gold Пистолет", function()
+        pcall(function()
+            local g = LocalPlayer.Backpack:FindFirstChild("Gun") or LocalPlayer.Character:FindFirstChild("Gun")
+            if g and g:FindFirstChild("Handle") then
+                g.Handle.Color = Color3.fromRGB(255, 215, 0)
+                g.Handle.Material = Enum.Material.Glass
+            end
+        end)
+    end)
+
+    AddButton(MiscTab, "Флинг всех игроков", function()
+        pcall(function()
+            local hrp = LocalPlayer.Character.HumanoidRootPart
+            local bva = Instance.new("BodyAngularVelocity", hrp)
+            bva.AngularVelocity = Vector3.new(0, 99999, 0)
+            bva.MaxTorque = Vector3.new(0, math.huge, 0)
+            task.wait(2)
+            bva:Destroy()
+        end)
+    end)
+
+    ---------------------------------------------------
+    -- 3. КНОПКА-КРУЖОК СВОРАЧИВАНИЯ
+    ---------------------------------------------------
+    local CircleBtn = Instance.new("TextButton", MainGui)
+    CircleBtn.Name = "CircleToggle"
+    CircleBtn.Size = UDim2.new(0, 54, 0, 54)
+    CircleBtn.Position = UDim2.new(0.02, 0, 0.35, 0)
+    CircleBtn.BackgroundColor3 = Color3.fromRGB(140, 0, 255)
+    CircleBtn.Text = "Z"
+    CircleBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    CircleBtn.Font = Enum.Font.GothamBold
+    CircleBtn.TextSize = 28
+    CircleBtn.Active = true
+    CircleBtn.Draggable = true
+
+    Instance.new("UICorner", CircleBtn).CornerRadius = UDim.new(1, 0)
+    local CircleStroke = Instance.new("UIStroke", CircleBtn)
+    CircleStroke.Color = Color3.fromRGB(255, 255, 255)
+    CircleStroke.Thickness = 2
+
+    CircleBtn.MouseButton1Click:Connect(function()
+        MainFrame.Visible = not MainFrame.Visible
+    end)
+end
+
+---------------------------------------------------
+-- РАБОЧИЙ ESP И ИГРОВАЯ ЛОГИКА
+---------------------------------------------------
+
+RunService.RenderStepped:Connect(function()
+    for _, plr in pairs(Players:GetPlayers()) do
+        if plr ~= LocalPlayer and plr.Character and plr.Character:FindFirstChild("HumanoidRootPart") and plr.Character:FindFirstChild("Humanoid") then
+            local char = plr.Character
+            local hl = char:FindFirstChild("ZeninHL")
+            local bbg = char:FindFirstChild("ZeninBBG")
+
+            if ESPEnabled then
+                -- Определение роли
+                local roleColor = Color3.fromRGB(0, 255, 128) -- Невиновен (Зеленый)
+                if plr.Backpack:FindFirstChild("Knife") or char:FindFirstChild("Knife") then
+                    roleColor = Color3.fromRGB(255, 40, 40) -- Убийца (Красный)
+                elseif plr.Backpack:FindFirstChild("Gun") or char:FindFirstChild("Gun") then
+                    roleColor = Color3.fromRGB(0, 140, 255) -- Шериф (Синий)
+                end
+
+                -- Отрисовка контура и бокса
+                if not hl then
+                    hl = Instance.new("Highlight")
+                    hl.Name = "ZeninHL"
+                    hl.Parent = char
+                    hl.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                end
+                hl.FillColor = roleColor
+                hl.OutlineColor = Color3.fromRGB(255, 255, 255)
+
+                -- Ник и Здоровье
+                if not bbg then
+                    bbg = Instance.new("BillboardGui")
+                    bbg.Name = "ZeninBBG"
+                    bbg.Parent = char
+                    bbg.Adornee = char:FindFirstChild("Head")
+                    bbg.Size = UDim2.new(0, 140, 0, 40)
+                    bbg.StudsOffset = Vector3.new(0, 2.8, 0)
+                    bbg.AlwaysOnTop = true
+
+                    local txt = Instance.new("TextLabel", bbg)
+                    txt.Name = "InfoText"
+                    txt.Size = UDim2.new(1, 0, 1, 0)
+                    txt.BackgroundTransparency = 1
+                    txt.TextStrokeTransparency = 0
+                    txt.Font = Enum.Font.GothamBold
+                    txt.TextSize = 13
+                end
+                local hp = math.floor(char.Humanoid.Health)
+                bbg.InfoText.Text = plr.DisplayName .. "\n[ HP: " .. hp .. " ]"
+                bbg.InfoText.TextColor3 = roleColor
+            else
+                if hl then hl:Destroy() end
+                if bbg then bbg:Destroy() end
+            end
+        end
+    end
+end)
+
+-- Фоновый цикл обработки функций
+task.spawn(function()
+    while task.wait(0.1) do
+        pcall(function()
+            -- Быстрый бег
+            if SpeedEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                LocalPlayer.Character.Humanoid.WalkSpeed = SpeedValue
+            elseif not SpeedEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+                LocalPlayer.Character.Humanoid.WalkSpeed = 16
+            end
+
+            -- Невидимость
+            if LocalPlayer.Character then
+                for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
+                    if part:IsA("BasePart") or part:IsA("Decal") then
+                        part.Transparency = InvisibleEnabled and 1 or 0
+                    end
+                end
+            end
+
+            -- Крылья
+            local char = LocalPlayer.Character
+            if WingsEnabled and char then
+                local torso = char:FindFirstChild("UpperTorso") or char:FindFirstChild("Torso")
+                if torso and not char:FindFirstChild("ZeninWings") then
+                    local wing = Instance.new("Part", char)
+                    wing.Name = "ZeninWings"
+                    wing.Size = Vector3.new(4, 2, 0.2)
+                    wing.CanCollide = false
+                    wing.Material = Enum.Material.Neon
+                    wing.Color = Color3.fromRGB(170, 0, 255)
+                    local weld = Instance.new("Weld", wing)
+                    weld.Part0 = torso
+                    weld.Part1 = wing
+                    weld.C0 = CFrame.new(0, 0, 0.8)
+                end
+            elseif not WingsEnabled and char and char:FindFirstChild("ZeninWings") then
+                char.ZeninWings:Destroy()
+            end
+
+            -- Аура
+            if AuraEnabled and char and char:FindFirstChild("HumanoidRootPart") then
+                if not char.HumanoidRootPart:FindFirstChild("ZeninAura") then
+                    local aura = Instance.new("ParticleEmitter", char.HumanoidRootPart)
+                    aura.Name = "ZeninAura"
+                    aura.Texture = "rbxassetid://242202318"
+                    aura.Color = ColorSequence.new(Color3.fromRGB(170, 0, 255))
+                    aura.Rate = 35
+                    aura.Speed = NumberRange.new(2, 5)
+                end
+            elseif not AuraEnabled and char and char:FindFirstChild("HumanoidRootPart") and char.HumanoidRootPart:FindFirstChild("ZeninAura") then
+                char.HumanoidRootPart.ZeninAura:Destroy()
+            end
+
+            -- Автоподбор оружия
+            if AutoGunPickup then
+                local gunDrop = Workspace:FindFirstChild("GunDrop")
+                if gunDrop and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = gunDrop.CFrame
+                end
+            end
+
+            -- Анти-флинг
+            if AntiFlingEnabled then
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= LocalPlayer and p.Character then
+                        for _, pt in pairs(p.Character:GetChildren()) do
+                            if pt:IsA("BasePart") then pt.CanCollide = false end
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- Стрельба сквозь стены (Wallbang)
+task.spawn(function()
+    while task.wait(0.5) do
+        if WallbangEnabled then
+            pcall(function()
+                for _, part in pairs(Workspace:GetDescendants()) do
+                    if part:IsA("BasePart") and part.Name ~= "Terrain" and not part:IsDescendantOf(LocalPlayer.Character) then
+                        part.CanCollide = false
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- Аимбот и Крутилка
+RunService.RenderStepped:Connect(function()
+    pcall(function()
+        if AimbotEnabled then
+            for _, plr in pairs(Players:GetPlayers()) do
+                if plr ~= LocalPlayer and plr.Character and (plr.Backpack:FindFirstChild("Knife") or plr.Character:FindFirstChild("Knife")) then
+                    Workspace.CurrentCamera.CFrame = CFrame.new(Workspace.CurrentCamera.CFrame.Position, plr.Character.HumanoidRootPart.Position)
+                end
+            end
+        end
+
+        if SpinbotEnabled and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.Angles(0, math.rad(50), 0)
+        end
+    end)
+end)
